@@ -1,5 +1,5 @@
 {% extends "base.html" %}{% block h1 %}Главная{% endblock %}
-{% block crumbs %}Сводка по данным CRM{% endblock %}
+{% block crumbs %}Вход выполнен {{ me.login_at }}{% endblock %}
 {% block content %}
 <div class="kpis">
   <div class="kpi"><small>Клиентов в базе</small><b>{{ totals.clients }}</b></div>

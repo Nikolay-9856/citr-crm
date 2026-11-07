@@ -1,0 +1,7 @@
+{% extends "base.html" %}{% block h1 %}Пользователи системы{% endblock %}{% block crumbs %}Доступно только роли «Администратор»{% endblock %}
+{% block content %}
+<div class="card"><div class="toolbar"><span class="grow"></span><a class="btn" href="{{ url_for('register') }}">+ Зарегистрировать пользователя</a></div>
+<table><tr><th>ID</th><th>Логин</th><th>ФИО</th><th>E-mail</th><th>Роль</th><th>Хэш пароля (начало)</th><th>Активен</th><th>Последний вход</th></tr>
+{% for u in rows %}<tr><td>{{ u.user_id }}</td><td class="mono">{{ u.login }}</td><td>{{ u.full_name }}</td><td>{{ u.email }}</td><td><span class="tag">{{ u.role_name }}</span></td><td class="mono muted">{{ u.hash_preview }}</td><td>{{ 'да' if u.is_active else 'нет' }}</td><td>{{ u.last_login_at|dt }}</td></tr>{% endfor %}
+</table></div>
+{% endblock %}

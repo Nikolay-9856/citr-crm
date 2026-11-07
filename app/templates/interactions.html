@@ -3,9 +3,8 @@
 {% if can_edit %}<form class="card" method="post"><h2>Новое взаимодействие</h2><div class="grid3">
 <div><label>Клиент</label><select name="client_id">{% for i,n in clients %}<option value="{{i}}">{{n}}</option>{% endfor %}</select></div>
 <div><label>Сделка (необязательно)</label><select name="deal_id"><option value="">— без сделки —</option>{% for i,n in deals %}<option value="{{i}}">{{n}}</option>{% endfor %}</select></div>
-<div><label>Сотрудник</label><select name="user_id">{% for i,n in users %}<option value="{{i}}">{{n}}</option>{% endfor %}</select></div>
 <div><label>Канал</label><select name="channel">{% for c in ['звонок','e-mail','встреча','мессенджер'] %}<option>{{c}}</option>{% endfor %}</select></div>
-<div><label>Тема</label><input name="subject" required></div><div><label>Результат</label><input name="note"></div>
+<div><label>Тема</label><input name="subject" required></div><div style="grid-column:span 2"><label>Результат</label><input name="note"></div>
 </div><div style="margin-top:14px"><button class="btn">Записать</button></div></form>{% endif %}
 <div class="card"><h2>Журнал</h2><table><tr><th>Дата</th><th>Канал</th><th>Клиент</th><th>Сделка</th><th>Тема</th><th>Результат</th><th>Сотрудник</th></tr>
 {% for r in rows %}<tr><td>{{ r.happened_at|dt }}</td><td><span class="tag">{{ r.channel }}</span></td><td>{{ r.client_name }}</td><td>{{ r.deal_title or '—' }}</td><td>{{ r.subject }}</td><td class="muted">{{ r.result_note or '' }}</td><td>{{ r.author }}</td></tr>{% endfor %}

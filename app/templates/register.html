@@ -1,0 +1,12 @@
+{% extends "base.html" %}{% block h1 %}Регистрация пользователя{% endblock %}{% block crumbs %}<a href="{{ url_for('users') }}">Пользователи</a> / новый{% endblock %}
+{% block content %}
+<form class="card" method="post" style="max-width:720px" autocomplete="off"><h2>Учётная запись</h2><div class="grid2">
+<div><label>Логин</label><input name="login" required value="{{ form.login or '' }}"></div>
+<div><label>Роль</label><select name="role_code">{% for i,n in roles %}<option value="{{i}}" {{ 'selected' if form.role_code==i }}>{{n}}</option>{% endfor %}</select></div>
+<div class="full"><label>ФИО</label><input name="full_name" required value="{{ form.full_name or '' }}"></div>
+<div class="full"><label>E-mail</label><input name="email" type="email" required value="{{ form.email or '' }}"></div>
+<div><label>Пароль</label><input name="password" type="password" required></div>
+<div><label>Повтор пароля</label><input name="password2" type="password" required></div>
+</div><p class="muted">Пароль не передаётся в БД: приложение генерирует соль (16 байт) и сохраняет только SHA-256(соль + пароль).</p>
+<button class="btn">Зарегистрировать</button> <a class="btn ghost" href="{{ url_for('users') }}">Отмена</a></form>
+{% endblock %}

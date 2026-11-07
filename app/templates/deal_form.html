@@ -11,7 +11,7 @@
  {% if mode=='edit' %}<div><label>Этап воронки (смена — через sp_change_deal_stage)</label>
  <input type="hidden" name="current_stage" value="{{ deal.stage_id }}">
  <select name="stage_id">{% for i,n in stages %}<option value="{{i}}" {{ 'selected' if deal.stage_id==i }}>{{n}}</option>{% endfor %}</select></div>
- <div><label>Дата закрытия</label><input disabled value="{{ deal.closed_at|dt }}"></div>{% endif %}
+ <div><label>Дата закрытия (ставит триггер)</label><input disabled value="{{ deal.closed_at|dt }}"></div>{% endif %}
 </div>
 <div style="margin-top:16px;display:flex;gap:10px"><button class="btn">{{ 'Создать' if mode=='new' else 'Сохранить' }}</button><a class="btn ghost" href="{{ url_for('deals') }}">Отмена</a></div>
 </form>

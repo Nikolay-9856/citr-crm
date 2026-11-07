@@ -1,16 +1,14 @@
-"""ЦИТР.CRM v3.0 — CRUD + представления и хранимые процедуры (Flask + MySQL).
-
-Списки читаются из VIEW, сделки создаются и переводятся по этапам процедурами.
-Вход в систему и роли появятся в v4.0.
-"""
+"""ЦИТР.CRM — веб-приложение учёта клиентов и сделок (Flask + MySQL)."""
 import configparser
 import os
 from datetime import datetime
 from functools import wraps
 
-from flask import Flask, flash, redirect, render_template, request, url_for
+from flask import (Flask, flash, redirect, render_template, request,
+                   session, url_for)
 
 from db import DBConnection, DBError
+from security import PasswordHelper
 
 cfg = configparser.ConfigParser()
 cfg.read(os.path.join(os.path.dirname(__file__), "config.ini"), encoding="utf-8")
@@ -19,17 +17,64 @@ app = Flask(__name__)
 app.secret_key = cfg["app"]["secret_key"]
 
 
+# ---------------------------------------------------------------- сессия
+class AppSession:
+    """Контекст текущего пользователя, хранится в подписанной cookie Flask."""
+
+    @staticmethod
+    def start(user):
+        session.clear()
+        session["user_id"] = user["user_id"]
+        session["full_name"] = user["full_name"]
+        session["role_code"] = user["role_code"]
+        session["role_name"] = user["role_name"]
+        session["login_at"] = datetime.now().strftime("%d.%m.%Y %H:%M")
+
+    @staticmethod
+    def user_id():
+        return session.get("user_id")
+
+    @staticmethod
+    def role():
+        return session.get("role_code")
+
+    @staticmethod
+    def is_admin():
+        return session.get("role_code") == "admin"
+
+    @staticmethod
+    def can_edit():
+        return session.get("role_code") in ("admin", "manager")
+
+    @staticmethod
+    def end():
+        session.clear()
+
+
 def login_required(view):
-    return view  # авторизация появится в v4.0
+    @wraps(view)
+    def wrapper(*args, **kwargs):
+        if not AppSession.user_id():
+            return redirect(url_for("login"))
+        return view(*args, **kwargs)
+    return wrapper
 
 
 def roles_required(*codes):
-    return lambda view: view
+    def decorator(view):
+        @wraps(view)
+        def wrapper(*args, **kwargs):
+            if AppSession.role() not in codes:
+                flash("Недостаточно прав для этого действия", "error")
+                return redirect(url_for("dashboard"))
+            return view(*args, **kwargs)
+        return wrapper
+    return decorator
 
 
 @app.context_processor
-def inject_flags():
-    return dict(me={}, is_admin=False, can_edit=True)
+def inject_session():
+    return dict(me=session, is_admin=AppSession.is_admin(), can_edit=AppSession.can_edit())
 
 
 def load_lookup(sql):
@@ -37,9 +82,29 @@ def load_lookup(sql):
     return [(r["id"], r["name"]) for r in DBConnection.fetch_all(sql)]
 
 
-@app.route("/")
-def index():
-    return redirect(url_for("dashboard"))
+# ---------------------------------------------------------------- вход
+@app.route("/", methods=["GET", "POST"])
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    if request.method == "POST":
+        login_value = request.form["login"].strip()
+        password = request.form["password"]
+        rows = DBConnection.call_proc("sp_get_auth_data", (login_value,))
+        user = rows[0] if rows else None
+        if (user and user["is_active"]
+                and PasswordHelper.verify_password(password, user["password_salt"], user["password_hash"])):
+            DBConnection.execute("UPDATE users SET last_login_at = NOW() WHERE user_id = %s",
+                                 (user["user_id"],))
+            AppSession.start(user)
+            return redirect(url_for("dashboard"))
+        flash("Неверный логин или пароль", "error")
+    return render_template("login.html")
+
+
+@app.route("/logout")
+def logout():
+    AppSession.end()
+    return redirect(url_for("login"))
 
 
 # ---------------------------------------------------------------- главная
@@ -194,7 +259,7 @@ def deal_edit(deal_id):
                  deal_id))
             if f.get("stage_id") and f["stage_id"] != f["current_stage"]:
                 DBConnection.call_proc("sp_change_deal_stage",
-                                       (deal_id, int(f["stage_id"]), int(f["manager_id"])))
+                                       (deal_id, int(f["stage_id"]), AppSession.user_id()))
             flash("Сделка обновлена", "ok")
             return redirect(url_for("deals"))
         except DBError as err:
@@ -223,12 +288,12 @@ def deal_delete(deal_id):
 @app.route("/interactions", methods=["GET", "POST"])
 @login_required
 def interactions():
-    if request.method == "POST":
+    if request.method == "POST" and AppSession.can_edit():
         f = request.form
         try:
             DBConnection.call_proc("sp_log_interaction", (
                 int(f["client_id"]), int(f["deal_id"]) if f.get("deal_id") else None,
-                int(f["user_id"]), f["channel"], f["subject"].strip(), f["note"].strip()))
+                AppSession.user_id(), f["channel"], f["subject"].strip(), f["note"].strip()))
             flash("Взаимодействие записано", "ok")
         except DBError as err:
             flash(str(err), "error")
@@ -240,7 +305,6 @@ def interactions():
         "LEFT JOIN deals d ON d.deal_id = i.deal_id JOIN users u ON u.user_id = i.user_id "
         "ORDER BY i.happened_at DESC")
     return render_template("interactions.html", rows=rows, **_deal_lookups(),
-                           users=load_lookup("SELECT user_id AS id, full_name AS name FROM users ORDER BY full_name"),
                            deals=load_lookup("SELECT deal_id AS id, CONCAT('№', deal_id, ' ', title) AS name "
                                              "FROM deals WHERE closed_at IS NULL ORDER BY deal_id"))
 
@@ -259,6 +323,43 @@ def reports():
         "GROUP BY seg.segment_id, seg.segment_name ORDER BY clients DESC")
     return render_template("reports.html", pipeline=pipeline, stage_report=stage_report,
                            segments=segments, d_from=d_from, d_to=d_to)
+
+
+# ---------------------------------------------------------------- пользователи
+@app.route("/users")
+@login_required
+@roles_required("admin")
+def users():
+    rows = DBConnection.fetch_all(
+        "SELECT u.user_id, u.login, u.full_name, u.email, r.role_name, u.is_active, u.last_login_at, "
+        "CONCAT(LEFT(u.password_hash, 12), '…') AS hash_preview "
+        "FROM users u JOIN roles r ON r.role_id = u.role_id ORDER BY u.user_id")
+    return render_template("users.html", rows=rows)
+
+
+@app.route("/users/register", methods=["GET", "POST"])
+@login_required
+@roles_required("admin")
+def register():
+    roles = load_lookup("SELECT role_code AS id, role_name AS name FROM roles ORDER BY role_id")
+    if request.method == "POST":
+        f = request.form
+        problems = PasswordHelper.check_strength(f["password"])
+        if f["password"] != f["password2"]:
+            problems.append("пароли не совпадают")
+        if problems:
+            flash("Пароль не принят: " + ", ".join(problems), "error")
+            return render_template("register.html", roles=roles, form=f)
+        salt = PasswordHelper.generate_salt()                       # 1. соль
+        pwd_hash = PasswordHelper.hash_password(f["password"], salt)  # 2. хэш
+        try:                                                         # 3. запись через процедуру
+            DBConnection.call_proc("sp_register_user", (f["login"].strip(), f["full_name"].strip(),
+                                                        f["email"].strip(), salt, pwd_hash, f["role_code"]))
+            flash(f"Пользователь {f['login']} зарегистрирован", "ok")
+            return redirect(url_for("users"))
+        except DBError as err:
+            flash(str(err), "error")
+    return render_template("register.html", roles=roles, form=request.form)
 
 
 @app.template_filter("money")

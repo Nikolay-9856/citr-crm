@@ -14,11 +14,16 @@
     <a href="{{ url_for('deals') }}" class="{{ 'on' if request.endpoint and request.endpoint.startswith('deal') }}">Сделки</a>
     <a href="{{ url_for('interactions') }}" class="{{ 'on' if request.endpoint=='interactions' }}">Взаимодействия</a>
     <a href="{{ url_for('reports') }}" class="{{ 'on' if request.endpoint=='reports' }}">Отчёты</a>
+    {% if is_admin %}
+    <div class="sep">Администрирование</div>
+    <a href="{{ url_for('users') }}" class="{{ 'on' if request.endpoint in ('users','register') }}">Пользователи</a>
+    {% endif %}
   </nav>
   <div class="me">
-    <div class="avatar">Ц</div>
-    <div><b>Тестовый стенд</b><small>без авторизации</small></div>
+    <div class="avatar">{{ me.full_name[:1] }}</div>
+    <div><b>{{ me.full_name }}</b><small>{{ me.role_name }}</small></div>
   </div>
+  <a class="logout" href="{{ url_for('logout') }}">Выйти</a>
 </aside>
 <main>
   <header class="top"><h1>{% block h1 %}{% endblock %}</h1><div class="crumbs">{% block crumbs %}{% endblock %}</div></header>
