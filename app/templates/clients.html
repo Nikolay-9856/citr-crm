@@ -1,0 +1,12 @@
+{% extends "base.html" %}{% block h1 %}Клиенты{% endblock %}{% block crumbs %}JOIN: клиенты, сегменты, контакты, сделки{% endblock %}
+{% block content %}
+<div class="card">
+<form class="toolbar"><input name="q" value="{{ q }}" placeholder="Поиск: название, ИНН, город"><button class="btn ghost">Найти</button>
+<span class="grow"></span>{% if can_edit %}<a class="btn" href="{{ url_for('client_new') }}">+ Новый клиент</a>{% endif %}</form>
+<table><tr><th>ID</th><th>Тип</th><th>Клиент</th><th>ИНН</th><th>Город</th><th>Сегмент</th><th>Основной контакт</th><th>Менеджер</th><th class="num">Сделок</th><th>Посл. контакт</th>{% if can_edit %}<th></th>{% endif %}</tr>
+{% for r in rows %}<tr><td>{{ r.client_id }}</td><td>{{ r.client_type }}</td><td><b>{{ r.client_name }}</b><br><span class="muted">{{ r.phone or '' }}</span></td><td class="mono">{{ r.inn or '—' }}</td><td>{{ r.city or '' }}</td>
+<td>{{ r.segment_name or '—' }}</td><td>{{ r.main_contact or '—' }}</td><td>{{ r.manager_name or '—' }}</td><td class="num">{{ r.deals_cnt }}</td><td>{{ r.last_touch|dt('%d.%m.%Y') }}</td>
+{% if can_edit %}<td class="actions"><a class="btn sm ghost" href="{{ url_for('client_edit', client_id=r.client_id) }}">Изменить</a>
+<button class="btn sm danger" onclick="askDelete('{{ url_for('client_delete', client_id=r.client_id) }}','Удалить клиента «{{ r.client_name }}»? Контакты и история взаимодействий будут удалены.')">Удалить</button></td>{% endif %}</tr>{% endfor %}
+</table><p class="muted">Найдено записей: {{ rows|length }}</p></div>
+{% endblock %}

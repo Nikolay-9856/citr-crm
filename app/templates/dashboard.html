@@ -1,0 +1,19 @@
+{% extends "base.html" %}{% block h1 %}Главная{% endblock %}
+{% block crumbs %}Сводка по данным CRM{% endblock %}
+{% block content %}
+<div class="kpis">
+  <div class="kpi"><small>Клиентов в базе</small><b>{{ totals.clients }}</b></div>
+  <div class="kpi"><small>Открытых сделок</small><b>{{ totals.open_deals }}</b></div>
+  <div class="kpi"><small>Взвешенный прогноз</small><b>{{ totals.forecast|money }}</b></div>
+  <div class="kpi"><small>Контактов за 30 дней</small><b>{{ totals.touches }}</b></div>
+</div>
+<div class="card"><h2>Воронка по менеджерам</h2>
+<table><tr><th>Менеджер</th><th class="num">Сделок</th><th class="num">Открыто</th><th class="num">Сумма открытых</th><th class="num">Прогноз</th><th class="num">Выиграно</th><th class="num">Выручка</th></tr>
+{% for p in pipeline %}<tr><td>{{ p.manager_name }}</td><td class="num">{{ p.deals_total }}</td><td class="num">{{ p.deals_open }}</td>
+<td class="num">{{ p.open_amount|money }}</td><td class="num">{{ p.forecast|money }}</td><td class="num">{{ p.deals_won }}</td><td class="num">{{ p.won_amount|money }}</td></tr>{% endfor %}
+</table></div>
+<div class="card"><h2>Последние изменения по сделкам</h2>
+<table><tr><th>№</th><th>Сделка</th><th>Клиент</th><th>Этап</th><th class="num">Сумма</th><th>Изменена</th></tr>
+{% for d in recent %}<tr><td>{{ d.deal_id }}</td><td>{{ d.title }}</td><td>{{ d.client_name }}</td><td><span class="tag">{{ d.stage_name }}</span></td><td class="num">{{ d.amount|money }}</td><td>{{ d.updated_at|dt }}</td></tr>{% endfor %}
+</table></div>
+{% endblock %}

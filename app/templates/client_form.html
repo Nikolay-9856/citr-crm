@@ -1,0 +1,19 @@
+{% extends "base.html" %}{% block h1 %}{{ 'Новый клиент' if mode=='new' else 'Карточка клиента №' ~ client.client_id }}{% endblock %}
+{% block crumbs %}<a href="{{ url_for('clients') }}">Клиенты</a> / {{ 'добавление' if mode=='new' else 'редактирование' }}{% endblock %}
+{% block content %}
+<form class="card" method="post"><h2>Реквизиты</h2>
+<div class="grid3">
+ <div><label>Тип клиента</label><select name="client_type">{% for t,n in [('ЮЛ','Юридическое лицо'),('ИП','Индивидуальный предприниматель'),('ФЛ','Физическое лицо')] %}<option value="{{t}}" {{ 'selected' if client and client.client_type==t }}>{{n}}</option>{% endfor %}</select></div>
+ <div style="grid-column:span 2"><label>Наименование</label><input name="client_name" required value="{{ client.client_name if client else '' }}"></div>
+ <div><label>ИНН</label><input name="inn" value="{{ client.inn or '' if client else '' }}" placeholder="10 или 12 цифр"></div>
+ <div><label>Телефон</label><input name="phone" value="{{ client.phone or '' if client else '' }}"></div>
+ <div><label>E-mail</label><input name="email" value="{{ client.email or '' if client else '' }}"></div>
+ <div><label>Город</label><input name="city" value="{{ client.city or '' if client else '' }}"></div>
+ <div><label>Сегмент</label><select name="segment_id"><option value="">— не задан —</option>{% for i,n in segments %}<option value="{{i}}" {{ 'selected' if client and client.segment_id|string==i|string }}>{{n}}</option>{% endfor %}</select></div>
+ <div><label>Ответственный менеджер</label><select name="manager_id"><option value="">— не назначен —</option>{% for i,n in managers %}<option value="{{i}}" {{ 'selected' if client and client.manager_id|string==i|string }}>{{n}}</option>{% endfor %}</select></div>
+</div>
+<div style="margin-top:16px;display:flex;gap:10px"><button class="btn">{{ 'Добавить' if mode=='new' else 'Сохранить изменения' }}</button><a class="btn ghost" href="{{ url_for('clients') }}">Отмена</a></div>
+</form>
+{% if contacts %}<div class="card"><h2>Контактные лица</h2><table><tr><th>ФИО</th><th>Должность</th><th>Телефон</th><th>E-mail</th><th></th></tr>
+{% for c in contacts %}<tr><td>{{ c.full_name }}</td><td>{{ c.job_title }}</td><td>{{ c.phone }}</td><td>{{ c.email }}</td><td>{% if c.is_primary %}<span class="tag s5">основной</span>{% endif %}</td></tr>{% endfor %}</table></div>{% endif %}
+{% endblock %}

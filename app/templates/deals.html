@@ -1,0 +1,12 @@
+{% extends "base.html" %}{% block h1 %}Сделки{% endblock %}{% block crumbs %}JOIN: сделки, клиенты, этапы, менеджеры{% endblock %}
+{% block content %}
+<div class="card">
+<form class="toolbar"><select name="stage" onchange="this.form.submit()"><option value="">Все этапы</option>{% for i,n in stages %}<option value="{{i}}" {{ 'selected' if stage==i|string }}>{{n}}</option>{% endfor %}</select>
+<span class="grow"></span>{% if can_edit %}<a class="btn" href="{{ url_for('deal_new') }}">+ Новая сделка</a>{% endif %}</form>
+<table><tr><th>№</th><th>Сделка</th><th>Клиент</th><th>Менеджер</th><th>Этап</th><th class="num">Сумма</th><th class="num">Вероятн.</th><th class="num">Взвешенная</th><th>План закрытия</th>{% if can_edit %}<th></th>{% endif %}</tr>
+{% for r in rows %}<tr><td>{{ r.deal_id }}</td><td><b>{{ r.title }}</b></td><td>{{ r.client_name }}</td><td>{{ r.manager_name }}</td><td><span class="tag s{{ r.stage_id }}">{{ r.stage_name }}</span></td>
+<td class="num">{{ r.amount|money }}</td><td class="num">{{ r.probability }}%</td><td class="num">{{ r.weighted_amount|money }}</td><td>{{ r.expected_close.strftime('%d.%m.%Y') if r.expected_close else '—' }}</td>
+{% if can_edit %}<td class="actions"><a class="btn sm ghost" href="{{ url_for('deal_edit', deal_id=r.deal_id) }}">Открыть</a>
+<button class="btn sm danger" onclick="askDelete('{{ url_for('deal_delete', deal_id=r.deal_id) }}','Удалить сделку №{{ r.deal_id }} «{{ r.title }}»? История этапов будет удалена.')">Удалить</button></td>{% endif %}</tr>{% endfor %}
+</table><p class="muted">Сделок: {{ rows|length }} · сумма: {{ rows|sum(attribute='amount')|money }}</p></div>
+{% endblock %}

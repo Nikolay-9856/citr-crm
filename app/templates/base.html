@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>{% block title %}ЦИТР.CRM{% endblock %}</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<aside class="side">
+  <div class="brand"><span class="logo">Ц</span><div><b>ЦИТР.CRM</b><small>работа с клиентами</small></div></div>
+  <nav>
+    <a href="{{ url_for('dashboard') }}" class="{{ 'on' if request.endpoint=='dashboard' }}">Главная</a>
+    <a href="{{ url_for('clients') }}" class="{{ 'on' if request.endpoint and request.endpoint.startswith('client') }}">Клиенты</a>
+    <a href="{{ url_for('deals') }}" class="{{ 'on' if request.endpoint and request.endpoint.startswith('deal') }}">Сделки</a>
+    <a href="{{ url_for('interactions') }}" class="{{ 'on' if request.endpoint=='interactions' }}">Взаимодействия</a>
+    <a href="{{ url_for('reports') }}" class="{{ 'on' if request.endpoint=='reports' }}">Отчёты</a>
+  </nav>
+  <div class="me">
+    <div class="avatar">Ц</div>
+    <div><b>Тестовый стенд</b><small>без авторизации</small></div>
+  </div>
+</aside>
+<main>
+  <header class="top"><h1>{% block h1 %}{% endblock %}</h1><div class="crumbs">{% block crumbs %}{% endblock %}</div></header>
+  {% with msgs = get_flashed_messages(with_categories=true) %}
+    {% for cat, m in msgs %}<div class="flash {{ cat }}">{{ m }}</div>{% endfor %}
+  {% endwith %}
+  {% block content %}{% endblock %}
+</main>
+<div id="modal" class="modal" hidden>
+  <div class="box">
+    <h3>Подтвердите удаление</h3>
+    <p id="modal-text"></p>
+    <form id="modal-form" method="post">
+      <button type="button" class="btn ghost" onclick="closeModal()">Отмена</button>
+      <button type="submit" class="btn danger">Удалить</button>
+    </form>
+  </div>
+</div>
+<script>
+function askDelete(action, text){
+  document.getElementById('modal-form').action = action;
+  document.getElementById('modal-text').textContent = text;
+  document.getElementById('modal').hidden = false;
+}
+function closeModal(){ document.getElementById('modal').hidden = true; }
+</script>
+</body>
+</html>

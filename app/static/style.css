@@ -1,0 +1,57 @@
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,"DejaVu Sans",Arial,sans-serif;font-size:13.5px;color:#1f2933;background:#f2f4f7;display:flex;min-height:100vh}
+a{color:#1d5fbf;text-decoration:none}
+.side{width:232px;background:#14263f;color:#c9d4e3;display:flex;flex-direction:column;padding:18px 0;flex-shrink:0}
+.brand{display:flex;gap:10px;align-items:center;padding:0 18px 18px;border-bottom:1px solid #22395a}
+.brand b{color:#fff;font-size:16px;display:block}.brand small{font-size:11px;color:#8ea3bf}
+.logo{width:36px;height:36px;border-radius:8px;background:#2f80ed;color:#fff;font-weight:700;display:flex;align-items:center;justify-content:center;font-size:18px}
+nav{padding:14px 10px;flex:1}
+nav a{display:block;padding:9px 12px;border-radius:6px;color:#c9d4e3;margin-bottom:2px}
+nav a.on{background:#2f80ed;color:#fff}
+nav .sep{font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;color:#6f86a6;padding:16px 12px 6px}
+.me{display:flex;gap:10px;align-items:center;padding:14px 18px;border-top:1px solid #22395a}
+.me b{color:#fff;font-size:12.5px;display:block;font-weight:600}.me small{font-size:11px;color:#8ea3bf}
+.avatar{width:32px;height:32px;border-radius:50%;background:#3d5a80;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:600}
+.logout{color:#8ea3bf;padding:4px 18px;font-size:12px}
+main{flex:1;padding:22px 28px;min-width:0}
+.top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:16px}
+.top h1{font-size:21px;margin:0;font-weight:650}.crumbs{color:#6b7785;font-size:12px}
+.card{background:#fff;border:1px solid #dfe4ea;border-radius:8px;padding:16px 18px;margin-bottom:16px}
+.card h2{font-size:14.5px;margin:0 0 12px;font-weight:650}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:16px}
+.kpi{background:#fff;border:1px solid #dfe4ea;border-radius:8px;padding:14px 16px}
+.kpi small{color:#6b7785;font-size:12px}.kpi b{display:block;font-size:22px;margin-top:4px;font-weight:650}
+table{width:100%;border-collapse:collapse}
+th{text-align:left;font-weight:600;color:#52606d;font-size:12px;background:#f7f9fb;border-bottom:1px solid #dfe4ea;padding:8px 10px}
+td{border-bottom:1px solid #eef1f4;padding:8px 10px;vertical-align:top}
+tr:hover td{background:#fafcff}
+td.num,th.num{text-align:right;white-space:nowrap}
+.tag{display:inline-block;padding:2px 8px;border-radius:10px;font-size:11.5px;background:#e8eef7;color:#284b7a;white-space:nowrap}
+.tag.s5{background:#e3f5ea;color:#1e7a43}.tag.s6{background:#fbe9e9;color:#a33}.tag.s4{background:#fff4dc;color:#8a5a00}
+.toolbar{display:flex;gap:10px;align-items:center;margin-bottom:12px}
+.toolbar .grow{flex:1}
+input,select,textarea{font:inherit;padding:7px 9px;border:1px solid #cbd2d9;border-radius:6px;background:#fff;width:100%}
+.toolbar input,.toolbar select{width:auto;min-width:240px}
+label{display:block;font-size:12px;color:#52606d;margin-bottom:4px;font-weight:500}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px 18px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px 18px}
+.full{grid-column:1/-1}
+.btn{display:inline-block;border:0;border-radius:6px;padding:8px 14px;font:inherit;font-weight:600;cursor:pointer;background:#2f80ed;color:#fff}
+.btn.ghost{background:#fff;color:#334;border:1px solid #cbd2d9}
+.btn.danger{background:#d64545}
+.btn.sm{padding:4px 9px;font-size:12px;font-weight:500}
+.actions{white-space:nowrap}
+.flash{padding:10px 14px;border-radius:6px;margin-bottom:14px;font-weight:500}
+.flash.ok{background:#e3f5ea;color:#1e6b3c;border:1px solid #b9e2c9}
+.flash.error{background:#fbe9e9;color:#9b2c2c;border:1px solid #f0c4c4}
+.muted{color:#7b8794}.mono{font-family:"DejaVu Sans Mono",monospace;font-size:12px}
+.modal{position:fixed;inset:0;background:rgba(15,25,40,.45);display:flex;align-items:center;justify-content:center}
+.modal[hidden]{display:none}
+.modal .box{background:#fff;border-radius:10px;padding:22px 24px;width:420px;box-shadow:0 12px 40px rgba(0,0,0,.25)}
+.modal h3{margin:0 0 8px}.modal form{display:flex;justify-content:flex-end;gap:10px;margin-top:18px}
+.bar{height:8px;background:#e8eef7;border-radius:4px;overflow:hidden}.bar i{display:block;height:100%;background:#2f80ed}
+/* вход */
+body.auth{align-items:center;justify-content:center;background:linear-gradient(135deg,#14263f,#24508a)}
+.authbox{background:#fff;border-radius:12px;padding:30px 32px;width:380px;box-shadow:0 20px 50px rgba(0,0,0,.3)}
+.authbox h1{font-size:20px;margin:12px 0 4px}.authbox p{color:#6b7785;margin:0 0 18px}
+.authbox .row{margin-bottom:12px}
