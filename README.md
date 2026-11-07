@@ -1,4 +1,4 @@
-# ЦИТР.CRM — учёт клиентов и сделок ООО «ЦИТР» (v4.0)
+# ЦИТР.CRM — учёт клиентов и сделок ООО «ЦИТР» (v5.0)
 
 Учебный проект производственной практики по ПМ.07 «Соадминистрирование и автоматизация баз данных и серверов». Предметная область — автоматизация взаимоотношений с клиентами (CRM).
 
@@ -12,6 +12,7 @@
 | v2.0 — CRUD | Веб-приложение на Flask: CRUD клиентов и сделок, журнал взаимодействий, запросы INNER/LEFT/RIGHT JOIN, GROUP BY + HAVING. |
 | v3.0 — VIEW + процедуры | Представления v_deals_full, v_manager_pipeline, v_clients_overview; процедуры sp_create_deal, sp_change_deal_stage, sp_log_interaction, sp_stage_report; приложение читает данные из VIEW и вызывает процедуры. |
 | v4.0 — триггеры + роли | Триггеры аудита и авто-timestamp; роли СУБД crm_reader / crm_operator / crm_admin; хэширование паролей SHA-256 + соль; вход, регистрация, разграничение интерфейса по ролям. |
+| v5.0 — финальная | Итоговый дамп БД, скриншоты, финальная документация. |
 
 ## Структура репозитория
 
@@ -28,12 +29,14 @@ docs/access_model.png
 docs/architecture.png
 docs/er_diagram.png
 docs/navigation.png
+docs/screenshots/  (скриншоты консоли MySQL и приложения)
 requirements.txt
 sql/01_schema.sql
 sql/02_data.sql
 sql/03_views_procedures.sql
 sql/04_triggers.sql
 sql/05_security.sql
+sql/dump_final.sql
 sql/queries_join.sql
 ```
 
@@ -48,6 +51,14 @@ mysql -u root -p < sql/03_views_procedures.sql    # представления �
 mysql -u root -p < sql/04_triggers.sql    # триггеры
 mysql -u root -p < sql/05_security.sql    # соль пароля, процедуры аутентификации, роли и пользователи СУБД
 ```
+
+Либо восстановите итоговое состояние из дампа одной командой:
+
+```bash
+mysql -u root -p < sql/dump_final.sql
+```
+
+Роли и пользователи СУБД хранятся в системной базе mysql и в дамп не входят: после восстановления выполните из `sql/05_security.sql` разделы «Роли СУБД» и «Пользователи СУБД».
 
 ## Запуск приложения
 
@@ -76,6 +87,7 @@ python app.py
 - `sql/03_views_procedures.sql` — представления и хранимые процедуры
 - `sql/04_triggers.sql` — триггеры
 - `sql/05_security.sql` — соль пароля, процедуры аутентификации, роли и пользователи СУБД
+- `sql/dump_final.sql` — итоговый дамп БД со всеми объектами
 - `sql/queries_join.sql` — запросы INNER / LEFT / RIGHT JOIN, GROUP BY + HAVING (выполнять по желанию)
 
 > Все данные (клиенты, сотрудники, сделки) — условные тестовые записи.
