@@ -1,4 +1,4 @@
-{% extends "base.html" %}{% block h1 %}Взаимодействия с клиентами{% endblock %}{% block crumbs %}Журнал контактов с клиентами{% endblock %}
+{% extends "base.html" %}{% block h1 %}Взаимодействия с клиентами{% endblock %}{% block crumbs %}Запись через sp_log_interaction{% endblock %}
 {% block content %}
 {% if can_edit %}<form class="card" method="post"><h2>Новое взаимодействие</h2><div class="grid3">
 <div><label>Клиент</label><select name="client_id">{% for i,n in clients %}<option value="{{i}}">{{n}}</option>{% endfor %}</select></div>

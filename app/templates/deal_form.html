@@ -1,5 +1,5 @@
 {% extends "base.html" %}{% block h1 %}{{ 'Новая сделка' if mode=='new' else 'Сделка №' ~ deal.deal_id }}{% endblock %}
-{% block crumbs %}<a href="{{ url_for('deals') }}">Сделки</a> / {{ 'создание' if mode=='new' else 'редактирование' }}{% endblock %}
+{% block crumbs %}<a href="{{ url_for('deals') }}">Сделки</a> / {{ 'создание (sp_create_deal)' if mode=='new' else 'редактирование' }}{% endblock %}
 {% block content %}
 <form class="card" method="post"><h2>Параметры сделки</h2>
 <div class="grid2">
@@ -8,13 +8,13 @@
  <div><label>Менеджер</label><select name="manager_id">{% for i,n in managers %}<option value="{{i}}" {{ 'selected' if deal and deal.manager_id|string==i|string }}>{{n}}</option>{% endfor %}</select></div>
  <div><label>Сумма, ₽</label><input name="amount" type="number" step="0.01" min="0" value="{{ deal.amount if deal else '' }}"></div>
  <div><label>Плановая дата закрытия</label><input name="expected_close" type="date" value="{{ deal.expected_close if deal and deal.expected_close else '' }}"></div>
- {% if mode=='edit' %}<div><label>Этап воронки</label>
+ {% if mode=='edit' %}<div><label>Этап воронки (смена — через sp_change_deal_stage)</label>
  <input type="hidden" name="current_stage" value="{{ deal.stage_id }}">
  <select name="stage_id">{% for i,n in stages %}<option value="{{i}}" {{ 'selected' if deal.stage_id==i }}>{{n}}</option>{% endfor %}</select></div>
  <div><label>Дата закрытия</label><input disabled value="{{ deal.closed_at|dt }}"></div>{% endif %}
 </div>
 <div style="margin-top:16px;display:flex;gap:10px"><button class="btn">{{ 'Создать' if mode=='new' else 'Сохранить' }}</button><a class="btn ghost" href="{{ url_for('deals') }}">Отмена</a></div>
 </form>
-{% if history %}<div class="card"><h2>История этапов</h2><table><tr><th>Когда</th><th>Было</th><th>Стало</th><th>Кто</th></tr>
+{% if history %}<div class="card"><h2>История этапов (deal_stage_history, заполняется триггерами)</h2><table><tr><th>Когда</th><th>Было</th><th>Стало</th><th>Кто</th></tr>
 {% for h in history %}<tr><td>{{ h.changed_at|dt }}</td><td>{{ h.old_stage or '—' }}</td><td>{{ h.new_stage }}</td><td>{{ h.full_name or '—' }}</td></tr>{% endfor %}</table></div>{% endif %}
 {% endblock %}

@@ -1,11 +1,11 @@
-{% extends "base.html" %}{% block h1 %}Отчёты{% endblock %}{% block crumbs %}JOIN-запросы{% endblock %}
+{% extends "base.html" %}{% block h1 %}Отчёты{% endblock %}{% block crumbs %}VIEW + хранимая процедура{% endblock %}
 {% block content %}
-<div class="card"><h2>Прогноз продаж по менеджерам (LEFT JOIN + GROUP BY)</h2>
+<div class="card"><h2>Прогноз продаж по менеджерам (v_manager_pipeline)</h2>
 {% set mx = (pipeline|map(attribute='open_amount')|max) or 1 %}
 <table><tr><th>Менеджер</th><th class="num">Открытых</th><th class="num">Сумма</th><th style="width:30%"></th><th class="num">Прогноз</th><th class="num">Выручка</th></tr>
 {% for p in pipeline %}<tr><td>{{ p.manager_name }}</td><td class="num">{{ p.deals_open }}</td><td class="num">{{ p.open_amount|money }}</td><td><div class="bar"><i style="width:{{ (p.open_amount/mx*100)|round }}%"></i></div></td><td class="num">{{ p.forecast|money }}</td><td class="num">{{ p.won_amount|money }}</td></tr>{% endfor %}</table></div>
 <div class="grid2">
-<div class="card"><h2>Движение по этапам (LEFT JOIN)</h2>
+<div class="card"><h2>Движение по этапам (CALL sp_stage_report)</h2>
 <form class="toolbar" style="gap:6px"><input type="date" name="from" value="{{ d_from }}" style="min-width:0"><input type="date" name="to" value="{{ d_to }}" style="min-width:0"><button class="btn ghost sm">Сформировать</button></form>
 <table><tr><th>Этап</th><th class="num">Переходов</th><th class="num">Сделок</th><th class="num">Сумма</th></tr>
 {% for s in stage_report %}<tr><td>{{ s.stage_name }}</td><td class="num">{{ s.transitions }}</td><td class="num">{{ s.deals }}</td><td class="num">{{ s.amount|money }}</td></tr>{% endfor %}</table></div>

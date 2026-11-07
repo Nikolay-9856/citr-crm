@@ -7,7 +7,7 @@
   <div class="kpi"><small>Взвешенный прогноз</small><b>{{ totals.forecast|money }}</b></div>
   <div class="kpi"><small>Контактов за 30 дней</small><b>{{ totals.touches }}</b></div>
 </div>
-<div class="card"><h2>Воронка по менеджерам</h2>
+<div class="card"><h2>Воронка по менеджерам (v_manager_pipeline)</h2>
 <table><tr><th>Менеджер</th><th class="num">Сделок</th><th class="num">Открыто</th><th class="num">Сумма открытых</th><th class="num">Прогноз</th><th class="num">Выиграно</th><th class="num">Выручка</th></tr>
 {% for p in pipeline %}<tr><td>{{ p.manager_name }}</td><td class="num">{{ p.deals_total }}</td><td class="num">{{ p.deals_open }}</td>
 <td class="num">{{ p.open_amount|money }}</td><td class="num">{{ p.forecast|money }}</td><td class="num">{{ p.deals_won }}</td><td class="num">{{ p.won_amount|money }}</td></tr>{% endfor %}

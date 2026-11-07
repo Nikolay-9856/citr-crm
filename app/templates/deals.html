@@ -1,4 +1,4 @@
-{% extends "base.html" %}{% block h1 %}Сделки{% endblock %}{% block crumbs %}JOIN: сделки, клиенты, этапы, менеджеры{% endblock %}
+{% extends "base.html" %}{% block h1 %}Сделки{% endblock %}{% block crumbs %}Источник: v_deals_full{% endblock %}
 {% block content %}
 <div class="card">
 <form class="toolbar"><select name="stage" onchange="this.form.submit()"><option value="">Все этапы</option>{% for i,n in stages %}<option value="{{i}}" {{ 'selected' if stage==i|string }}>{{n}}</option>{% endfor %}</select>
